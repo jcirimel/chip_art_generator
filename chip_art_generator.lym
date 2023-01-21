@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<klayout-macro>
+ <description/>
+ <version/>
+ <category>pymacros</category>
+ <prolog/>
+ <epilog/>
+ <doc/>
+ <autorun>false</autorun>
+ <autorun-early>false</autorun-early>
+ <shortcut/>
+ <show-in-menu>false</show-in-menu>
+ <group-name/>
+ <menu-path/>
+ <interpreter>python</interpreter>
+ <dsl-interpreter-name/>
+ <text>import pya
+import types
+import pathlib
+from PIL import Image
+from numpy import asarray
+
+# Create the form object from the uic file:
+current_dir = str(pathlib.Path(__file__).parent.resolve()) + "/"
+ui_file = pya.QFile(current_dir + "chip_art_generator.ui")
+ui_file.open(pya.QIODevice.ReadOnly)
+form = pya.QFormBuilder().load(ui_file)
+#, pya.Application.instance().main_window()
+ui_file.close()
+
+def import_image_clicked(self, clicked):
+  file = pya.QFileDialog.getOpenFileName(self)
+  self.import_image_widget.import_image_text.text = file
+  load_image(self)
+  
+def load_image(self):
+  print("image loading")
+  self.image = Image.open(self.import_image_widget.import_image_text.text)
+  
+
+form.import_image_widget.import_image_text.returnPressed.connect(load_image)
+form.import_image_widget.import_image_button.clicked(types.MethodType(import_image_clicked, form))
+
+
+form.exec_()
+
+</text>
+</klayout-macro>
